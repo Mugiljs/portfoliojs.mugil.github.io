@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One Site, Four Domains</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Playfair+Display:wght@600;700&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --radius:12px;
+    --maxw:1180px;
+    --shadow: 0 30px 60px -25px rgba(0,0,0,0.45);
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+    transition:background .35s ease, color .35s ease;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%; display:block;}
+  a{color:inherit;}
+  button{font-family:inherit;}
+  ::selection{background:var(--accent); color:#fff;}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:3px;}
+
+  /* ---------- THEME TOKENS ---------- */
+  body[data-theme="dark"]{
+    --bg:#0E0F12; --panel:#17181D; --panel-2:#1D1F26;
+    --text:#EDEEF2; --muted:#9AA0AC; --border:rgba(255,255,255,0.09);
+    --img-filter: grayscale(35%) brightness(0.85) contrast(1.05);
+  }
+  body[data-theme="light"]{
+    --bg:#F7F7F4; --panel:#FFFFFF; --panel-2:#F0F0EC;
+    --text:#15171B; --muted:#666D7A; --border:rgba(0,0,0,0.08);
+    --img-filter: grayscale(20%) brightness(1) contrast(1.02);
+  }
+
+  /* ---------- DOMAIN TOKENS ---------- */
+  body[data-domain="gym"]{
+    --accent:#FF4B3E; --accent-2:#FFC93C; --radius:6px;
+    --font-display:'Oswald', sans-serif; --tracking:0.01em;
+  }
+  body[data-domain="retail"]{
+    --accent:#C4437A; --accent-2:#2F6F4E; --radius:20px;
+    --font-display:'Playfair Display', serif; --tracking:0em;
+  }
+  body[data-domain="commercial"]{
+    --accent:#2F6FED; --accent-2:#8B98AE; --radius:8px;
+    --font-display:'Space Grotesk', sans-serif; --tracking:-0.01em;
+  }
+  body[data-domain="film"]{
+    --accent:#D4AF37; --accent-2:#8A5FE0; --radius:2px;
+    --font-display:'Playfair Display', serif; --tracking:0.02em;
+  }
+
+  h1,h2,h3{
+    font-family:var(--font-display);
+    letter-spacing:var(--tracking);
+    line-height:1.1;
+    margin:0;
+    font-weight:600;
+  }
+
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 clamp(18px,5vw,44px);}
+  section{padding:clamp(52px,8vw,100px) 0;}
+
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:0.78rem; font-weight:600; letter-spacing:0.04em;
+    color:var(--accent);
+  }
+  .eyebrow::before{content:''; width:16px; height:2px; background:var(--accent);}
+
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    font-weight:600; font-size:0.92rem;
+    padding:13px 24px; border-radius:var(--radius);
+    text-decoration:none; cursor:pointer; border:1px solid transparent;
+    transition:transform .15s ease, background .2s ease, border-color .2s ease, color .2s ease;
+  }
+  .btn-primary{background:var(--accent); color:#fff;}
+  .btn-primary:hover{transform:translateY(-2px);}
+  .btn-ghost{border-color:var(--border); color:var(--text);}
+  .btn-ghost:hover{border-color:var(--accent); color:var(--accent);}
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:sticky; top:0; z-index:80;
+    background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  .nav-inner{
+    max-width:var(--maxw); margin:0 auto;
+    padding:14px clamp(18px,5vw,44px);
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+  }
+  .brand{display:flex; align-items:center; gap:10px; font-weight:600; font-family:var(--font-display); font-size:1.05rem; white-space:nowrap;}
+  .brand .mark{width:14px; height:14px; border-radius:3px; background:var(--accent);}
+
+  .domain-switch{
+    display:flex; gap:4px;
+    background:var(--panel); border:1px solid var(--border);
+    padding:4px; border-radius:999px;
+    overflow-x:auto; scrollbar-width:none;
+  }
+  .domain-switch::-webkit-scrollbar{display:none;}
+  .domain-switch button{
+    border:none; background:transparent; color:var(--muted);
+    padding:9px 16px; border-radius:999px; font-size:0.86rem; font-weight:600;
+    cursor:pointer; white-space:nowrap; transition:background .2s ease, color .2s ease;
+  }
+  .domain-switch button.active{background:var(--accent); color:#fff;}
+  .domain-switch button:not(.active):hover{color:var(--text);}
+
+  .header-right{display:flex; align-items:center; gap:10px;}
+
+  .theme-toggle{
+    width:44px; height:44px; border-radius:50%;
+    border:1px solid var(--border); background:var(--panel);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; color:var(--text); flex-shrink:0;
+  }
+  .theme-toggle svg{width:18px; height:18px;}
+
+  .nav-toggle{
+    display:none; width:44px; height:44px; border-radius:50%;
+    border:1px solid var(--border); background:var(--panel); color:var(--text);
+    cursor:pointer; font-size:1.1rem; flex-shrink:0;
+  }
+
+  @media (max-width:820px){
+    .domain-switch{
+      position:fixed; left:0; right:0; top:70px;
+      margin:0 16px; z-index:70;
+      transform:translateY(-140%); transition:transform .25s ease;
+      border-radius:16px; flex-wrap:wrap; justify-content:center;
+    }
+    .domain-switch.open{transform:translateY(0);}
+    .nav-toggle{display:flex; align-items:center; justify-content:center;}
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    display:grid; grid-template-columns:1.05fr 0.95fr;
+    gap:clamp(28px,5vw,60px); align-items:center;
+    padding-top:clamp(40px,7vw,80px);
+  }
+  @media (max-width:900px){ .hero{grid-template-columns:1fr;} }
+
+  .hero h1{font-size:clamp(2.1rem, 4.4vw, 3.3rem); margin-top:16px;}
+  .hero p.lede{color:var(--muted); max-width:52ch; margin-top:18px; font-size:clamp(1rem,1.3vw,1.1rem);}
+  .hero-actions{display:flex; gap:12px; margin-top:28px; flex-wrap:wrap;}
+
+  .stat-row{display:flex; gap:clamp(20px,4vw,44px); margin-top:40px; flex-wrap:wrap;}
+  .stat b{display:block; font-family:var(--font-display); font-size:clamp(1.4rem,2.4vw,1.9rem); color:var(--accent);}
+  .stat span{font-size:0.82rem; color:var(--muted);}
+
+  .hero-media{position:relative; display:grid; grid-template-columns:1.2fr 1fr; gap:14px;}
+  .img-tile{
+    position:relative; overflow:hidden; border-radius:var(--radius);
+    border:1px solid var(--border);
+    box-shadow:var(--shadow);
+  }
+  .img-tile img{width:100%; height:100%; object-fit:cover; filter:var(--img-filter); transition:filter .35s ease;}
+  .img-tile::after{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(160deg, var(--accent) 0%, transparent 55%);
+    opacity:0.28; mix-blend-mode:overlay;
+  }
+  .hero-media .tall{aspect-ratio:3/4;}
+  .hero-media .stacked{display:flex; flex-direction:column; gap:14px;}
+  .hero-media .short{aspect-ratio:4/3; flex:1;}
+
+  /* gym: diagonal clip on hero media */
+  body[data-domain="gym"] .hero-media .tall{clip-path:polygon(8% 0,100% 0,100% 100%,0 100%);}
+  /* film: letterbox bars */
+  body[data-domain="film"] .hero-media .tall::before{
+    content:''; position:absolute; left:0; right:0; top:0; height:10%;
+    background:var(--bg); z-index:2;
+  }
+  body[data-domain="film"] .hero-media .tall::after{
+    content:''; position:absolute; left:0; right:0; bottom:0; height:10%;
+    background:var(--bg); z-index:2; opacity:1; mix-blend-mode:normal;
+  }
+
+  /* ---------- SECTION HEAD ---------- */
+  .section-head{max-width:60ch; margin-bottom:36px;}
+  .section-head h2{font-size:clamp(1.6rem,3vw,2.1rem); margin-top:12px;}
+  .section-head p{color:var(--muted); margin-top:10px;}
+
+  /* ---------- FEATURES ---------- */
+  .feature-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  @media (max-width:820px){ .feature-grid{grid-template-columns:1fr;} }
+  .feature-card{
+    background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+    padding:28px; transition:border-color .2s ease, transform .2s ease;
+  }
+  .feature-card:hover{border-color:var(--accent); transform:translateY(-3px);}
+  .feature-card .icon{
+    width:44px; height:44px; border-radius:var(--radius);
+    background:color-mix(in srgb, var(--accent) 15%, transparent);
+    display:flex; align-items:center; justify-content:center; margin-bottom:16px;
+  }
+  .feature-card .icon svg{width:22px; height:22px; stroke:var(--accent); fill:none;}
+  .feature-card h3{font-size:1.05rem;}
+  .feature-card p{color:var(--muted); font-size:0.92rem; margin-top:10px;}
+
+  /* ---------- GALLERY ---------- */
+  .gallery-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px;}
+  @media (max-width:900px){ .gallery-grid{grid-template-columns:repeat(2,1fr);} }
+  .gallery-item{position:relative;}
+  .gallery-item .img-tile{aspect-ratio:1/1;}
+  .gallery-item .cap{margin-top:10px; font-size:0.85rem; color:var(--muted);}
+
+  /* ---------- TESTIMONIAL ---------- */
+  .testimonial{
+    background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+    padding:clamp(28px,5vw,48px); max-width:70ch;
+  }
+  .testimonial p{font-family:var(--font-display); font-size:clamp(1.15rem,2vw,1.5rem); line-height:1.4;}
+  .testimonial .who{margin-top:20px; color:var(--muted); font-size:0.88rem;}
+  .testimonial .who b{color:var(--text);}
+
+  /* ---------- CTA ---------- */
+  .cta-box{
+    border-radius:var(--radius); border:1px solid var(--border);
+    background:linear-gradient(135deg, color-mix(in srgb, var(--accent) 16%, var(--panel)), var(--panel));
+    padding:clamp(32px,5vw,56px);
+    display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:24px;
+  }
+  .cta-box h2{font-size:clamp(1.4rem,2.6vw,1.9rem); max-width:26ch;}
+  .cta-box p{color:var(--muted); margin-top:8px; max-width:40ch;}
+
+  footer{
+    border-top:1px solid var(--border);
+    padding:28px clamp(18px,5vw,44px);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+    color:var(--muted); font-size:0.82rem;
+  }
+
+  .fade-target{transition:opacity .22s ease, transform .22s ease;}
+  .fade-out{opacity:0; transform:translateY(6px);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition-duration:0.001s !important;}
+    html{scroll-behavior:auto;}
+  }
+</style>
+</head>
+<body data-theme="dark" data-domain="gym">
+
+<!-- inline icon defs -->
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="icon-dumbbell" viewBox="0 0 24 24"><path d="M6 7v10M2 9v6M18 7v10M22 9v6M6 12h12" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="icon-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M9.5 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="icon-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="2"/><circle cx="12" cy="12" r="5" stroke-width="2"/><circle cx="12" cy="12" r="1" stroke-width="2"/></symbol>
+  <symbol id="icon-bag" viewBox="0 0 24 24"><path d="M6 8h12l1 13H5L6 8Z" stroke-width="2" stroke-linejoin="round"/><path d="M9 8V6a3 3 0 0 1 6 0v2" stroke-width="2"/></symbol>
+  <symbol id="icon-truck" viewBox="0 0 24 24"><path d="M1 8h13v9H1z" stroke-width="2" stroke-linejoin="round"/><path d="M14 11h4l4 4v2h-8v-6Z" stroke-width="2" stroke-linejoin="round"/><circle cx="6" cy="19" r="1.6" stroke-width="2"/><circle cx="17.5" cy="19" r="1.6" stroke-width="2"/></symbol>
+  <symbol id="icon-star" viewBox="0 0 24 24"><path d="M12 2 15 9l7 1-5 5 1.5 7L12 18.5 5.5 22 7 15 2 10l7-1 3-7Z" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="icon-building" viewBox="0 0 24 24"><path d="M4 21V4h11v17M15 21V9h5v12M8 8h1M8 12h1M8 16h1" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="icon-clipboard" viewBox="0 0 24 24"><path d="M9 3h6v3H9zM5 6h14v15H5z" stroke-width="2" stroke-linejoin="round"/><path d="M9 12h6M9 16h6" stroke-width="2"/></symbol>
+  <symbol id="icon-check" viewBox="0 0 24 24"><path d="M5 12l5 5 9-9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="icon-clapper" viewBox="0 0 24 24"><path d="M3 9h18v11H3z" stroke-width="2" stroke-linejoin="round"/><path d="M3 9l2-5 4 2-2 3M9 9l2-5 4 2-2 3M15 9l2-5 4 2-2 3" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="icon-scissors" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3" stroke-width="2"/><circle cx="6" cy="18" r="3" stroke-width="2"/><path d="M8.5 8 20 20M20 4 8.5 16" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="icon-wand" viewBox="0 0 24 24"><path d="M4 20 16 8M14 3l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2ZM19 12l.7 1.3 1.3.7-1.3.7-.7 1.3-.7-1.3-1.3-.7 1.3-.7.7-1.3Z" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+  <symbol id="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" stroke-width="2"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.4 1.4M17.6 17.6 19 19M5 19l1.4-1.4M17.6 6.4 19 5" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="icon-moon" viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z" stroke-width="2" stroke-linejoin="round"/></symbol>
+</svg>
+
+<header>
+  <div class="nav-inner">
+    <div class="brand"><span class="mark"></span><span data-bind="brandName">GYMFLOW</span></div>
+    <div class="domain-switch" id="domainSwitch">
+      <button data-domain-btn="gym" class="active">Gym</button>
+      <button data-domain-btn="retail">Retail</button>
+      <button data-domain-btn="commercial">Commercial</button>
+      <button data-domain-btn="film">Film &amp; Video</button>
+    </div>
+    <div class="header-right">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg id="themeIcon"><use href="#icon-moon"></use></svg>
+      </button>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle domain menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap fade-target" id="mainContent">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <span class="eyebrow" data-bind="eyebrow">Now enrolling</span>
+      <h1 data-bind="headline">Train Harder. Recover Smarter.</h1>
+      <p class="lede" data-bind="lede">Strength coaching, recovery tools, and group classes built around your schedule — not the other way around.</p>
+      <div class="hero-actions">
+        <a href="#cta" class="btn btn-primary" data-bind="ctaPrimary">Book a free session</a>
+        <a href="#gallery" class="btn btn-ghost" data-bind="ctaGhost">See the facility</a>
+      </div>
+      <div class="stat-row">
+        <div class="stat"><b data-bind="stat1v">1,200+</b><span data-bind="stat1l">Active members</span></div>
+        <div class="stat"><b data-bind="stat2v">45</b><span data-bind="stat2l">Classes / week</span></div>
+        <div class="stat"><b data-bind="stat3v">12</b><span data-bind="stat3l">Certified coaches</span></div>
+      </div>
+    </div>
+    <div class="hero-media">
+      <div class="img-tile tall"><img data-bind="heroImg1" src="" alt=""></div>
+      <div class="stacked">
+        <div class="img-tile short"><img data-bind="heroImg2" src="" alt=""></div>
+        <div class="img-tile short"><img data-bind="heroImg3" src="" alt=""></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="section-head">
+      <span class="eyebrow" data-bind="featEyebrow">What you get</span>
+      <h2 data-bind="featHeadline">Everything built around results</h2>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="icon"><svg><use data-bind="feat1icon" href="#icon-dumbbell"></use></svg></div>
+        <h3 data-bind="feat1title">Strength Programming</h3>
+        <p data-bind="feat1desc">Progressive plans built around your goals and tracked every session.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon"><svg><use data-bind="feat2icon" href="#icon-users"></use></svg></div>
+        <h3 data-bind="feat2title">Group Classes</h3>
+        <p data-bind="feat2desc">HIIT, mobility, and conditioning classes running seven days a week.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon"><svg><use data-bind="feat3icon" href="#icon-target"></use></svg></div>
+        <h3 data-bind="feat3title">1-on-1 Coaching</h3>
+        <p data-bind="feat3desc">A dedicated coach who adjusts your plan as your body adapts.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section id="gallery">
+    <div class="section-head">
+      <span class="eyebrow" data-bind="galEyebrow">Take a look</span>
+      <h2 data-bind="galHeadline">Inside the space</h2>
+    </div>
+    <div class="gallery-grid">
+      <div class="gallery-item"><div class="img-tile"><img data-bind="galImg1" src="" alt=""></div><div class="cap" data-bind="galCap1">Free-weight floor</div></div>
+      <div class="gallery-item"><div class="img-tile"><img data-bind="galImg2" src="" alt=""></div><div class="cap" data-bind="galCap2">Group class studio</div></div>
+      <div class="gallery-item"><div class="img-tile"><img data-bind="galImg3" src="" alt=""></div><div class="cap" data-bind="galCap3">Recovery lounge</div></div>
+      <div class="gallery-item"><div class="img-tile"><img data-bind="galImg4" src="" alt=""></div><div class="cap" data-bind="galCap4">Coaching bay</div></div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIAL -->
+  <section>
+    <div class="testimonial">
+      <p data-bind="quote">"I stopped guessing what to do in the gym. Every session has a plan, and I've hit three PRs this year."</p>
+      <div class="who"><b data-bind="who1">Maya R.</b><span data-bind="who2"> · Member since 2023</span></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="cta">
+    <div class="cta-box">
+      <div>
+        <h2 data-bind="ctaHeadline">Your first session is on us.</h2>
+        <p data-bind="ctaSub">Bring a friend, wear what's comfortable — we'll handle the rest.</p>
+      </div>
+      <a href="#" class="btn btn-primary" data-bind="ctaButton">Claim your session</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <span data-bind="footerLeft">© 2026 GYMFLOW</span>
+  <span data-bind="footerRight">Switch the tab above to see Retail, Commercial, and Film &amp; Video.</span>
+</footer>
+
+<script>
+const DOMAINS = {
+  gym: {
+    brandName: "GYMFLOW",
+    eyebrow: "Now enrolling",
+    headline: "Train Harder. Recover Smarter.",
+    lede: "Strength coaching, recovery tools, and group classes built around your schedule — not the other way around.",
+    ctaPrimary: "Book a free session", ctaGhost: "See the facility",
+    stat1v:"1,200+", stat1l:"Active members", stat2v:"45", stat2l:"Classes / week", stat3v:"12", stat3l:"Certified coaches",
+    featEyebrow:"What you get", featHeadline:"Everything built around results",
+    feat1icon:"#icon-dumbbell", feat1title:"Strength Programming", feat1desc:"Progressive plans built around your goals and tracked every session.",
+    feat2icon:"#icon-users", feat2title:"Group Classes", feat2desc:"HIIT, mobility, and conditioning classes running seven days a week.",
+    feat3icon:"#icon-target", feat3title:"1-on-1 Coaching", feat3desc:"A dedicated coach who adjusts your plan as your body adapts.",
+    galEyebrow:"Take a look", galHeadline:"Inside the space",
+    galCap1:"Free-weight floor", galCap2:"Group class studio", galCap3:"Recovery lounge", galCap4:"Coaching bay",
+    quote:"\"I stopped guessing what to do in the gym. Every session has a plan, and I've hit three PRs this year.\"",
+    who1:"Maya R.", who2:" · Member since 2023",
+    ctaHeadline:"Your first session is on us.", ctaSub:"Bring a friend, wear what's comfortable — we'll handle the rest.", ctaButton:"Claim your session",
+    footerLeft:"© 2026 GYMFLOW", footerRight:"Switch the tab above to see Retail, Commercial, and Film & Video.",
+    seeds:{h1:"gym-a",h2:"gym-b",h3:"gym-c",g1:"gym-d",g2:"gym-e",g3:"gym-f",g4:"gym-g"}
+  },
+  retail: {
+    brandName: "MERIDIAN & CO.",
+    eyebrow: "New season, in stock",
+    headline: "Curated pieces, delivered fast.",
+    lede: "A tighter edit of clothing and home goods, restocked weekly, with returns that don't fight you.",
+    ctaPrimary: "Shop new arrivals", ctaGhost: "View lookbook",
+    stat1v:"300+", stat1l:"Products in rotation", stat2v:"48hr", stat2l:"Average shipping", stat3v:"4.8★", stat3l:"Customer rating",
+    featEyebrow:"Why shop here", featHeadline:"Retail without the runaround",
+    feat1icon:"#icon-bag", feat1title:"New Arrivals Weekly", feat1desc:"Small, considered drops instead of an overwhelming catalog.",
+    feat2icon:"#icon-truck", feat2title:"Easy Returns", feat2desc:"Free returns within 30 days, no restocking fee, no questions.",
+    feat3icon:"#icon-star", feat3title:"Style Concierge", feat3desc:"Message us for outfit help — a real person replies within an hour.",
+    galEyebrow:"Latest edit", galHeadline:"This week's arrivals",
+    galCap1:"Outerwear", galCap2:"Everyday basics", galCap3:"Home & tableware", galCap4:"Accessories",
+    quote:"\"Their sizing notes actually match reality. I've stopped ordering two sizes just in case.\"",
+    who1:"Devon K.", who2:" · Repeat customer",
+    ctaHeadline:"Get 15% off your first order.", ctaSub:"Join the list — no spam, just restock alerts and early access.", ctaButton:"Get the code",
+    footerLeft:"© 2026 Meridian & Co.", footerRight:"Switch the tab above to see Gym, Commercial, and Film & Video.",
+    seeds:{h1:"retail-a",h2:"retail-b",h3:"retail-c",g1:"retail-d",g2:"retail-e",g3:"retail-f",g4:"retail-g"}
+  },
+  commercial: {
+    brandName: "STRATFORD BUILT",
+    eyebrow: "Design-build partner",
+    headline: "Commercial spaces built to perform.",
+    lede: "From ground-up construction to tenant fit-outs, delivered on schedule by one accountable team.",
+    ctaPrimary: "Request a proposal", ctaGhost: "View past projects",
+    stat1v:"2.4M", stat1l:"Sq. ft. delivered", stat2v:"18", stat2l:"Active sites", stat3v:"97%", stat3l:"On-time delivery",
+    featEyebrow:"Services", featHeadline:"One team, start to close-out",
+    feat1icon:"#icon-building", feat1title:"Design-Build", feat1desc:"A single contract covering design, permitting, and construction.",
+    feat2icon:"#icon-clipboard", feat2title:"Facility Management", feat2desc:"Ongoing maintenance contracts so buildings stay lease-ready.",
+    feat3icon:"#icon-check", feat3title:"Tenant Fit-Out", feat3desc:"Space planning and build-out scoped around a tenant's move-in date.",
+    galEyebrow:"Recent work", galHeadline:"Sites we've delivered",
+    galCap1:"Distribution center", galCap2:"Office fit-out", galCap3:"Retail plaza", galCap4:"Medical facility",
+    quote:"\"They caught a permitting issue three weeks before it would have delayed us. That alone paid for the contract.\"",
+    who1:"Anita P.", who2:" · VP of Operations, regional retailer",
+    ctaHeadline:"Get a proposal in 5 business days.", ctaSub:"Send your site plan and timeline — we'll scope it and call you back.", ctaButton:"Request a proposal",
+    footerLeft:"© 2026 Stratford Built", footerRight:"Switch the tab above to see Gym, Retail, and Film & Video.",
+    seeds:{h1:"commercial-a",h2:"commercial-b",h3:"commercial-c",g1:"commercial-d",g2:"commercial-e",g3:"commercial-f",g4:"commercial-g"}
+  },
+  film: {
+    brandName: "SILVERREEL STUDIO",
+    eyebrow: "Now booking 2026",
+    headline: "Stories shot to move people.",
+    lede: "A production and post house for brands and filmmakers who need it to look right the first time.",
+    ctaPrimary: "Start a project", ctaGhost: "Watch the reel",
+    stat1v:"80+", stat1l:"Productions shot", stat2v:"14", stat2l:"Festival awards", stat3v:"6", stat3l:"Countries filmed",
+    featEyebrow:"What we do", featHeadline:"From script to final color",
+    feat1icon:"#icon-clapper", feat1title:"Production", feat1desc:"Directing, camera, and lighting crews for shoots of any scale.",
+    feat2icon:"#icon-scissors", feat2title:"Post & Color", feat2desc:"Editing and color grading that keeps a consistent visual voice.",
+    feat3icon:"#icon-wand", feat3title:"Motion Design", feat3desc:"Titles, VFX, and animation built to match the footage, not sit on top of it.",
+    galEyebrow:"Selected frames", galHeadline:"From recent productions",
+    galCap1:"Documentary short", galCap2:"Brand campaign", galCap3:"Music video", galCap4:"Narrative feature",
+    quote:"\"They understood the tone from the first call. No rounds of 'make it feel more premium' — it was right the first cut.\"",
+    who1:"Renn O.", who2:" · Creative Director",
+    ctaHeadline:"Tell us about the project.", ctaSub:"Send a brief and we'll reply with a treatment within a week.", ctaButton:"Start a project",
+    footerLeft:"© 2026 Silverreel Studio", footerRight:"Switch the tab above to see Gym, Retail, and Commercial.",
+    seeds:{h1:"film-a",h2:"film-b",h3:"film-c",g1:"film-d",g2:"film-e",g3:"film-f",g4:"film-g"}
+  }
+};
+
+const body = document.body;
+const mainContent = document.getElementById('mainContent');
+const domainSwitch = document.getElementById('domainSwitch');
+const navToggle = document.getElementById('navToggle');
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+
+function imgUrl(seed, w, h){ return `https://picsum.photos/seed/${seed}/${w}/${h}`; }
+
+function paint(domainKey){
+  const d = DOMAINS[domainKey];
+  document.querySelectorAll('[data-bind]').forEach(el => {
+    const key = el.getAttribute('data-bind');
+    if(!(key in d)) return;
+    if(el.tagName === 'IMG'){ el.src = d[key]; }
+    else if(el.tagName === 'USE'){ el.setAttribute('href', d[key]); }
+    else { el.textContent = d[key]; }
+  });
+  document.querySelector('[data-bind="heroImg1"]').src = imgUrl(d.seeds.h1, 700, 900);
+  document.querySelector('[data-bind="heroImg2"]').src = imgUrl(d.seeds.h2, 500, 380);
+  document.querySelector('[data-bind="heroImg3"]').src = imgUrl(d.seeds.h3, 500, 380);
+  document.querySelector('[data-bind="galImg1"]').src = imgUrl(d.seeds.g1, 500, 500);
+  document.querySelector('[data-bind="galImg2"]').src = imgUrl(d.seeds.g2, 500, 500);
+  document.querySelector('[data-bind="galImg3"]').src = imgUrl(d.seeds.g3, 500, 500);
+  document.querySelector('[data-bind="galImg4"]').src = imgUrl(d.seeds.g4, 500, 500);
+}
+
+function setDomain(key, animate=true){
+  if(!DOMAINS[key]) return;
+  const swap = () => {
+    body.setAttribute('data-domain', key);
+    paint(key);
+    domainSwitch.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.domainBtn === key));
+    try{ localStorage.setItem('site-domain', key); }catch(e){}
+  };
+  if(animate && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    mainContent.classList.add('fade-out');
+    setTimeout(() => { swap(); mainContent.classList.remove('fade-out'); }, 180);
+  } else {
+    swap();
+  }
+}
+
+function setTheme(theme){
+  body.setAttribute('data-theme', theme);
+  themeIcon.querySelector('use').setAttribute('href', theme === 'dark' ? '#icon-sun' : '#icon-moon');
+  try{ localStorage.setItem('site-theme', theme); }catch(e){}
+}
+
+domainSwitch.addEventListener('click', e => {
+  const btn = e.target.closest('button[data-domain-btn]');
+  if(!btn) return;
+  setDomain(btn.dataset.domainBtn);
+  domainSwitch.classList.remove('open');
+});
+
+themeToggle.addEventListener('click', () => {
+  const current = body.getAttribute('data-theme');
+  setTheme(current === 'dark' ? 'light' : 'dark');
+});
+
+navToggle.addEventListener('click', () => domainSwitch.classList.toggle('open'));
+
+// restore saved preferences, else default gym/dark
+let savedDomain, savedTheme;
+try{ savedDomain = localStorage.getItem('site-domain'); savedTheme = localStorage.getItem('site-theme'); }catch(e){}
+setTheme(savedTheme === 'light' ? 'light' : 'dark');
+setDomain(savedDomain && DOMAINS[savedDomain] ? savedDomain : 'gym', false);
+</script>
+
+</body>
+</html>
