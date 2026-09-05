@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full-Stack .NET & Azure Engineer — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #05070d;
+    --panel: rgba(16, 22, 40, 0.4);
+    --panel-hover: rgba(22, 30, 50, 0.6);
+    --border: rgba(255, 255, 255, 0.06);
+    --border-hover: rgba(0, 240, 255, 0.3);
+    --paper: #E2E8F0;
+    --muted: #94A3B8;
+    --cyan: #00F0FF;
+    --cyan-glow: rgba(0, 240, 255, 0.5);
+    --purple: #9D4EDD;
+    --purple-glow: rgba(157, 78, 221, 0.4);
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --display: 'Space Grotesk', sans-serif;
+    --body: 'Inter', sans-serif;
+    --maxw: 1200px;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--paper);
+    font-family: var(--body);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  img { max-width: 100%; }
+  a { color: inherit; }
+  ::selection { background: rgba(0, 240, 255, 0.3); color: #fff; }
+
+  /* AI Ambient Canvas */
+  .ai-canvas {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: -1; overflow: hidden; pointer-events: none;
+  }
+  .orb {
+    position: absolute; border-radius: 50%; filter: blur(100px);
+    opacity: 0.5; animation: float 15s infinite ease-in-out alternate;
+  }
+  .orb-1 {
+    width: 500px; height: 500px; background: var(--purple-glow);
+    top: -10%; left: -10%;
+  }
+  .orb-2 {
+    width: 600px; height: 600px; background: var(--cyan-glow);
+    bottom: -20%; right: -10%; animation-delay: -5s;
+  }
+  @keyframes float {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(80px, 60px) scale(1.1); }
+  }
+
+  .wrap {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 clamp(20px, 5vw, 48px);
+    position: relative;
+    z-index: 1;
+  }
+
+  section { padding: clamp(56px, 9vw, 108px) 0; }
+
+  h1, h2, h3 {
+    font-family: var(--display);
+    font-weight: 600;
+    line-height: 1.12;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, var(--cyan), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .eyebrow-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 0.78rem;
+    color: var(--cyan);
+    background: rgba(0, 240, 255, 0.05);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    padding: 6px 14px; border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.1);
+    animation: pulseGlow 3s infinite alternate;
+  }
+  .eyebrow-tag::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--cyan); box-shadow: 0 0 8px var(--cyan);
+  }
+  @keyframes pulseGlow {
+    from { box-shadow: 0 0 5px rgba(0, 240, 255, 0.05); }
+    to { box-shadow: 0 0 15px rgba(0, 240, 255, 0.2); }
+  }
+
+  /* Glassmorphism utility */
+  .glass-panel {
+    background: var(--panel);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .glass-panel:hover {
+    background: var(--panel-hover);
+    border-color: var(--border-hover);
+    box-shadow: 0 10px 30px -10px rgba(0, 240, 255, 0.15);
+    transform: translateY(-4px);
+  }
+
+  /* Scroll Reveal Animation */
+  .reveal {
+    opacity: 0; transform: translateY(40px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  }
+  .reveal.active { opacity: 1; transform: translateY(0); }
+
+  /* ---------- NAV ---------- */
+  header.site-nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(5, 7, 13, 0.7);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    max-width: var(--maxw); margin: 0 auto;
+    padding: 16px clamp(20px, 5vw, 48px);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-name { font-family: var(--display); font-weight: 600; font-size: 1.05rem; }
+  .nav-name span { color: var(--muted); font-weight: 400; font-size: 0.85rem; display: block; margin-top: 2px; }
+  nav.links { display: flex; gap: 28px; font-size: 0.92rem; }
+  nav.links a {
+    text-decoration: none; color: var(--muted);
+    transition: color .2s ease, text-shadow .2s ease;
+    padding-bottom: 2px;
+  }
+  nav.links a:hover { color: var(--cyan); text-shadow: 0 0 8px var(--cyan-glow); }
+  .nav-toggle { display: none; background: none; border: 1px solid var(--border); color: var(--paper); width: 40px; height: 40px; border-radius: 6px; cursor: pointer; }
+
+  @media (max-width: 760px) {
+    nav.links {
+      position: fixed; inset: 68px 0 0 0;
+      background: rgba(5, 7, 13, 0.95);
+      backdrop-filter: blur(10px);
+      flex-direction: column; padding: 32px clamp(20px, 5vw, 48px);
+      transform: translateY(-100%); transition: transform .3s ease;
+      gap: 20px; border-top: 1px solid var(--border);
+    }
+    nav.links.open { transform: translateY(0); }
+    .nav-toggle { display: block; }
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    padding-top: clamp(60px, 10vw, 120px);
+    display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(32px, 5vw, 64px); align-items: center;
+  }
+  @media (max-width: 900px) { .hero { grid-template-columns: 1fr; } }
+  .hero h1 { font-size: clamp(2.4rem, 5vw, 4rem); margin-top: 24px; }
+  .hero p.lede { color: var(--muted); font-size: clamp(1.05rem, 1.5vw, 1.2rem); max-width: 54ch; margin-top: 24px; }
+  .hero-actions { display: flex; gap: 16px; margin-top: 36px; flex-wrap: wrap; }
+  
+  .btn {
+    font-family: var(--body); font-weight: 600; font-size: 0.95rem;
+    padding: 14px 28px; border-radius: 8px; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: all 0.3s ease; cursor: pointer; position: relative; overflow: hidden;
+  }
+  .btn-primary {
+    background: var(--cyan); color: #000;
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.4); border: 1px solid transparent;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px); box-shadow: 0 0 30px rgba(0, 240, 255, 0.6);
+    background: #fff;
+  }
+  .btn-ghost {
+    background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); color: var(--paper);
+    backdrop-filter: blur(5px);
+  }
+  .btn-ghost:hover {
+    border-color: var(--cyan); color: var(--cyan);
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+  }
+
+  /* Terminal Mockup */
+  .terminal {
+    background: rgba(10, 14, 25, 0.8); backdrop-filter: blur(12px);
+    border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(0, 240, 255, 0.1);
+  }
+  .terminal-bar {
+    display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+    background: rgba(0, 0, 0, 0.3); border-bottom: 1px solid var(--border);
+  }
+  .terminal-bar .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot.r { background: #FF5F56; } .dot.y { background: #FFBD2E; } .dot.g { background: #27C93F; }
+  .terminal-bar .title { margin-left: 8px; font-family: var(--mono); font-size: 0.8rem; color: var(--muted); }
+  .terminal-body {
+    font-family: var(--mono); font-size: 0.9rem; padding: 24px;
+    min-height: 240px; color: #A0AEC0;
+  }
+  .terminal-body .prompt { color: var(--cyan); text-shadow: 0 0 5px var(--cyan-glow); }
+  .terminal-body .out { color: var(--paper); display: block; margin: 4px 0 16px; }
+  .terminal-line { white-space: pre-wrap; word-break: break-word; margin-bottom: 4px; }
+  .cursor {
+    display: inline-block; width: 8px; height: 1.2em; background: var(--cyan);
+    vertical-align: middle; margin-left: 4px; animation: blink 1s step-end infinite;
+    box-shadow: 0 0 8px var(--cyan);
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ---------- SECTION HEADS ---------- */
+  .section-head { max-width: 60ch; margin-bottom: 48px; }
+  .section-head h2 { font-size: clamp(1.8rem, 3.5vw, 2.5rem); margin-top: 16px; }
+  .section-head p { color: var(--muted); margin-top: 16px; font-size: 1.05rem; }
+
+  /* ---------- ABOUT / CERTS ---------- */
+  #about .about-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 56px; align-items: center; }
+  @media (max-width: 820px) { #about .about-grid { grid-template-columns: 1fr; } }
+  #about p { color: var(--paper); max-width: 65ch; margin-top: 20px; }
+  
+  .certs { display: flex; flex-direction: column; gap: 14px; }
+  .cert-pill {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 20px; font-size: 0.95rem; font-weight: 500;
+  }
+  .cert-pill .code { font-family: var(--mono); color: var(--cyan); font-size: 0.85rem; background: rgba(0, 240, 255, 0.1); padding: 4px 8px; border-radius: 4px; }
+
+  /* ---------- STACK ---------- */
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+  .stack-card { padding: 32px; }
+  .stack-card h3 { font-size: 1.2rem; color: #fff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+  .stack-card h3::before { content: ''; width: 8px; height: 8px; background: var(--cyan); border-radius: 50%; box-shadow: 0 0 10px var(--cyan); }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 10px; }
+  .tag {
+    font-family: var(--mono); font-size: 0.82rem; color: #cbd5e1;
+    background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border);
+    border-radius: 6px; padding: 6px 12px; transition: all .2s ease;
+  }
+  .tag:hover {
+    border-color: var(--cyan); color: var(--cyan);
+    background: rgba(0, 240, 255, 0.05); box-shadow: 0 0 10px rgba(0, 240, 255, 0.1);
+  }
+
+  /* ---------- EXPERIENCE TIMELINE ---------- */
+  .timeline { border-left: 2px solid rgba(0, 240, 255, 0.15); margin-left: 12px; padding-left: 32px; }
+  .tl-item { position: relative; padding-bottom: 48px; }
+  .tl-item:last-child { padding-bottom: 0; }
+  .tl-item::before {
+    content: attr(data-index); position: absolute; left: -50px; top: 0;
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--bg); border: 2px solid rgba(0, 240, 255, 0.5);
+    color: var(--cyan); font-family: var(--mono); font-size: 0.8rem; font-weight: bold;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+    transition: all 0.3s ease;
+  }
+  .tl-item:hover::before { border-color: var(--cyan); box-shadow: 0 0 20px rgba(0, 240, 255, 0.5); transform: scale(1.1); background: rgba(0, 240, 255, 0.1); }
+  .tl-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; justify-content: space-between; }
+  .tl-head h3 { font-size: 1.25rem; color: #fff; }
+  .tl-dates { font-family: var(--mono); color: var(--cyan); font-size: 0.85rem; }
+  .tl-domain { color: var(--muted); font-size: 0.95rem; margin-top: 6px; }
+  .tl-item details { margin-top: 16px; }
+  .tl-item summary {
+    cursor: pointer; font-size: 0.9rem; color: var(--paper);
+    list-style: none; display: inline-flex; align-items: center; gap: 8px; font-weight: 500;
+    padding: 6px 12px; background: rgba(255, 255, 255, 0.03); border-radius: 6px; border: 1px solid transparent;
+    transition: all 0.2s ease;
+  }
+  .tl-item summary:hover { background: rgba(255, 255, 255, 0.06); border-color: var(--border); }
+  .tl-item summary::-webkit-details-marker { display: none; }
+  .tl-item summary::before {
+    content: '>'; font-family: var(--mono); color: var(--cyan);
+    display: inline-block; transition: transform .3s ease; font-weight: bold;
+  }
+  .tl-item details[open] summary::before { transform: rotate(90deg); }
+  .tl-item ul { margin: 16px 0 0; padding-left: 20px; color: #cbd5e1; font-size: 0.95rem; }
+  .tl-item li { margin-bottom: 10px; line-height: 1.7; }
+  .tl-item li::marker { color: var(--cyan); }
+  .tl-stack { margin-top: 18px; }
+
+  /* ---------- PROJECTS ---------- */
+  .project-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+  @media (max-width: 820px) { .project-grid { grid-template-columns: 1fr; } }
+  .project-card { padding: 36px; display: flex; flex-direction: column; }
+  .project-card .p-tag { font-family: var(--mono); font-size: 0.75rem; color: var(--purple); letter-spacing: 1px; font-weight: 600; text-transform: uppercase; display: inline-block; margin-bottom: 12px; }
+  .project-card h3 { font-size: 1.4rem; color: #fff; margin-bottom: 16px; }
+  .project-card p { color: var(--paper); font-size: 1rem; line-height: 1.7; flex-grow: 1; }
+  .project-card .tag-row { margin-top: 24px; }
+
+  /* ---------- CONTACT / FOOTER ---------- */
+  #contact { text-align: left; }
+  .contact-box {
+    padding: clamp(40px, 6vw, 64px);
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 32px; align-items: center;
+    background: linear-gradient(135deg, rgba(16, 22, 40, 0.6), rgba(0, 240, 255, 0.05));
+  }
+  .contact-box h2 { font-size: clamp(2rem, 4vw, 2.5rem); max-width: 14ch; line-height: 1.2; }
+  .contact-links { display: flex; flex-direction: column; gap: 16px; font-family: var(--mono); font-size: 1rem; }
+  .contact-links a { text-decoration: none; color: var(--paper); display: inline-flex; align-items: center; gap: 12px; transition: all .2s ease; }
+  .contact-links a::before { content: '↳'; color: var(--cyan); transition: transform 0.2s; }
+  .contact-links a:hover { color: var(--cyan); }
+  .contact-links a:hover::before { transform: translateX(4px); }
+  
+  footer {
+    padding: 40px clamp(20px, 5vw, 48px);
+    max-width: var(--maxw); margin: 0 auto;
+    color: var(--muted); font-size: 0.85rem;
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.001s !important; transition-duration: 0.001s !important; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Ambient AI Background -->
+<div class="ai-canvas">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+</div>
+
+<header class="site-nav">
+  <div class="nav-inner">
+    <div class="nav-name">Mugileeshwaran J S<span>Full-Stack .NET &amp; Azure Engineer</span></div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <nav class="links" id="navLinks">
+      <a href="#about">About</a>
+      <a href="#stack">Stack</a>
+      <a href="#experience">Experience</a>
+      <a href="#projects">Projects</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- HERO -->
+  <section class="hero reveal" id="top">
+    <div>
+      <span class="eyebrow-tag">Available for new projects</span>
+      <h1>Building enterprise apps on <span class="text-gradient">.NET and Azure</span>, five years in production.</h1>
+      <p class="lede">Full-stack engineer working across .NET Core, Angular, and Azure — from Windows Services on IIS to microservices on Azure App Service. Recently pairing that with GitHub Copilot and RAG-based tooling to move faster without cutting corners.</p>
+      <div class="hero-actions">
+        <a href="#experience" class="btn btn-primary">See the work history</a>
+        <a href="#contact" class="btn btn-ghost">Get in touch</a>
+      </div>
+    </div>
+
+    <div class="terminal glass-panel" aria-hidden="false">
+      <div class="terminal-bar">
+        <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+        <span class="title">sys_admin@ai-core ~ zsh</span>
+      </div>
+      <div class="terminal-body" id="termBody"></div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="reveal">
+    <div class="about-grid">
+      <div>
+        <span class="eyebrow-tag">About</span>
+        <h2 class="section-head" style="margin-bottom:0;">Five years of shipping .NET systems that stay up</h2>
+        <p style="margin-top:24px;">I design and build scalable applications with .NET Core, Angular, and SQL Server, and I own them through deployment on Azure — App Service, Functions, Static Web Apps, and Service Bus. Along the way that's meant writing Windows Services, migrating Xamarin.Forms apps to .NET MAUI, standing up CI/CD pipelines in Azure DevOps and Jenkins, and troubleshooting the kind of routing bugs that only show up in production.</p>
+        <p style="margin-top:16px;">More recently I've been folding AI into that workflow: GitHub Copilot for day-to-day development, and Retrieval-Augmented Generation and agentic patterns for the LMS platform I'm building now. I care about clean architecture — repository and factory patterns, testable APIs, and services that are easy for the next engineer to pick up.</p>
+      </div>
+      <div class="certs">
+        <div class="cert-pill glass-panel"><span>Azure Fundamentals</span><span class="code">AZ-900</span></div>
+        <div class="cert-pill glass-panel"><span>Azure Developer Associate</span><span class="code">AZ-204</span></div>
+        <div class="cert-pill glass-panel"><span>Azure AI Engineer Associate</span><span class="code">AZ-102</span></div>
+        <div class="cert-pill glass-panel"><span>Azure AI Fundamentals</span><span class="code">AI-900</span></div>
+        <div class="cert-pill glass-panel"><span>GitHub Copilot Certified</span><span class="code">GH-COPILOT</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STACK -->
+  <section id="stack" class="reveal">
+    <div class="section-head">
+      <span class="eyebrow-tag">Stack</span>
+      <h2>What I build with</h2>
+      <p>Grouped by where each tool sits in a typical project — from the API layer down to the pipeline that ships it.</p>
+    </div>
+    <div class="stack-grid">
+      <div class="stack-card glass-panel">
+        <h3>Languages &amp; frameworks</h3>
+        <div class="tag-row">
+          <span class="tag">C#</span><span class="tag">.NET Framework 4.5</span><span class="tag">.NET 3 / 5 / 7 / 8</span>
+          <span class="tag">ASP.NET MVC</span><span class="tag">Web API 2.0</span><span class="tag">XAML</span>
+          <span class="tag">.NET MAUI</span><span class="tag">Xamarin.Forms</span>
+        </div>
+      </div>
+      <div class="stack-card glass-panel">
+        <h3>Frontend</h3>
+        <div class="tag-row">
+          <span class="tag">Angular 12–20</span><span class="tag">Ionic 7 / 8</span><span class="tag">Capacitor 7</span>
+          <span class="tag">Bootstrap 5</span><span class="tag">RxJS</span><span class="tag">HTML / CSS / JS</span>
+        </div>
+      </div>
+      <div class="stack-card glass-panel">
+        <h3>Cloud &amp; Azure</h3>
+        <div class="tag-row">
+          <span class="tag">Azure Functions</span><span class="tag">Blob Storage</span><span class="tag">App Service</span>
+          <span class="tag">Static Web Apps</span><span class="tag">CDN / Front Door</span><span class="tag">Application Gateway</span>
+          <span class="tag">Service Bus</span><span class="tag">Key Vault</span><span class="tag">Azure DevOps</span>
+        </div>
+      </div>
+      <div class="stack-card glass-panel">
+        <h3>Data, services &amp; AI</h3>
+        <div class="tag-row">
+          <span class="tag">SQL Server</span><span class="tag">PostgreSQL</span><span class="tag">Dapper</span><span class="tag">EF Core</span>
+          <span class="tag">GraphQL / HotChocolate</span><span class="tag">Ocelot Gateway</span><span class="tag">RabbitMQ</span>
+          <span class="tag">Microservices</span><span class="tag">Keycloak SSO</span><span class="tag">RAG</span><span class="tag">Agentic AI</span>
+          <span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">AI Tools</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience" class="reveal">
+    <div class="section-head">
+      <span class="eyebrow-tag">Experience</span>
+      <h2>Six projects, one thread: ship it, then own it</h2>
+      <p>Reverse-chronological. Expand any role for what I actually did there.</p>
+    </div>
+    <div class="timeline">
+
+      <article class="tl-item" data-index="1">
+        <div class="tl-head">
+          <h3>LMS Learning Platform</h3>
+          <span class="tl-dates">Feb 2026 – Present</span>
+        </div>
+        <div class="tl-domain">Ilink Digital · Learning experience platform</div>
+        <details>
+          <summary>What I did</summary>
+          <ul>
+            <li>Built a microservices-based LXP on .NET 8 and PostgreSQL, using HotChocolate GraphQL for flexible data querying instead of a fixed set of REST endpoints.</li>
+            <li>Built the SPA in Angular 20 with Bootstrap 5, with an Ocelot gateway routing requests across the services.</li>
+            <li>Set up Jenkins CI/CD pipelines to deploy the whole stack to IIS Server without manual steps.</li>
+          </ul>
+          <div class="tl-stack tag-row">
+            <span class="tag">.NET 8</span><span class="tag">PostgreSQL</span><span class="tag">GraphQL</span><span class="tag">Angular 20</span><span class="tag">Ocelot</span><span class="tag">Jenkins</span>
+          </div>
+        </details>
+      </article>
+
+      <article class="tl-item" data-index="2">
+        <div class="tl-head">
+          <h3>ITAP Platform</h3>
+          <span class="tl-dates">Jan 2026</span>
+        </div>
+        <div class="tl-domain">Ilink Digital · Enterprise identity &amp; access</div>
+        <details>
+          <summary>What I did</summary>
+          <ul>
+            <li>Integrated Keycloak for authentication and authorization across the platform, hosted first on IIS on-prem and later migrated to an Azure VM.</li>
+            <li>Tracked down and fixed a 404 bug where refreshing certain Angular routes broke, caused by client-side routes colliding with IIS-hosted microservice paths of the same name.</li>
+          </ul>
+          <div class="tl-stack tag-row">
+            <span class="tag">Keycloak</span><span class="tag">IIS</span><span class="tag">Azure VM</span><span class="tag">Angular</span>
+          </div>
+        </details>
+      </article>
+
+      <article class="tl-item" data-index="3">
+        <div class="tl-head">
+          <h3>National Science Foundation</h3>
+          <span class="tl-dates">Ilink Digital</span>
+        </div>
+        <div class="tl-domain">Assessment &amp; awareness program · Hybrid cross-platform app</div>
+        <details>
+          <summary>What I did</summary>
+          <ul>
+            <li>Built the hybrid app with Angular 18, Ionic 8, and Capacitor 7, backed by .NET 7 Core APIs on Azure SQL.</li>
+            <li>Wired up cookie-based authentication and dynamic content from a Strapi v5 headless CMS.</li>
+            <li>Added Google Maps and reCAPTCHA v2 with autosuggest search, and applied Repository and Factory patterns to keep the API layer maintainable.</li>
+            <li>Secured credentials in Azure Key Vault, served images from Blob Storage, and used Azure Front Door for global traffic distribution.</li>
+            <li>Set up GitHub Actions for CI/CD, and built Android and iOS release builds for both stores.</li>
+          </ul>
+          <div class="tl-stack tag-row">
+            <span class="tag">Angular 18</span><span class="tag">Ionic 8</span><span class="tag">.NET 7</span><span class="tag">Azure SQL</span><span class="tag">Key Vault</span><span class="tag">Front Door</span><span class="tag">GitHub Actions</span>
+          </div>
+        </details>
+      </article>
+
+      <article class="tl-item" data-index="4">
+        <div class="tl-head">
+          <h3>Fineline Technologies — Phase I, II, III</h3>
+          <span class="tl-dates">Ilink Digital</span>
+        </div>
+        <div class="tl-domain">Inventory management &amp; order tracking</div>
+        <details>
+          <summary>What I did</summary>
+          <ul>
+            <li>Led the migration from Xamarin.Forms to .NET MAUI, updating deprecated APIs and rebuilding platform-specific code by hand.</li>
+            <li>Moved the backend from .NET Framework to .NET Core / .NET 7 without breaking mobile compatibility.</li>
+            <li>Integrated Zebra RFID 8500 scanners via their Android SDK for real-time inventory tracking.</li>
+            <li>Shipped Android builds through Android Studio and iOS builds through Xcode 15.</li>
+          </ul>
+          <div class="tl-stack tag-row">
+            <span class="tag">.NET MAUI</span><span class="tag">Xamarin.Forms</span><span class="tag">.NET 7</span><span class="tag">Zebra RFID SDK</span><span class="tag">Xcode 15</span>
+          </div>
+        </details>
+      </article>
+
+      <article class="tl-item" data-index="5">
+        <div class="tl-head">
+          <h3>BGCA — ARS &amp; Insight</h3>
+          <span class="tl-dates">Ilink Digital</span>
+        </div>
+        <div class="tl-domain">Boys &amp; Girls Club of America · Safety assessment tool</div>
+        <details>
+          <summary>What I did</summary>
+          <ul>
+            <li>Replaced a manual reporting process with Azure Functions that pull data from SQL Server, build Excel files with ClosedXML, and trigger PowerShell via Blob triggers.</li>
+            <li>Set up an Azure Blob Storage archival policy through Service Bus that auto-purges old files for compliance.</li>
+            <li>Built email notifications for status updates, and PDF/CSV/Excel report generation with iTextSharp and ClosedXML.</li>
+            <li>Wrote the CI/CD pipelines in Azure DevOps and xUnit tests for the API, with AD and Azure AD B2C authentication.</li>
+          </ul>
+          <div class="tl-stack tag-row">
+            <span class="tag">Azure Functions</span><span class="tag">Dapper</span><span class="tag">Angular 12</span><span class="tag">Ionic</span><span class="tag">xUnit</span><span class="tag">AD B2C</span>
+          </div>
+        </details>
+      </article>
+
+      <article class="tl-item" data-index="6">
+        <div class="tl-head">
+          <h3>Comcast</h3>
+          <span class="tl-dates">via Ilink Digital</span>
+        </div>
+        <div class="tl-domain">Telecommunications</div>
+        <details>
+          <summary>What I did</summary>
+          <ul>
+            <li>Provided daily production support on RDP servers, including deploying and monitoring IIS Express-hosted services.</li>
+            <li>Built the backend with C#, Web API 2.0, and LINQ, and the Angular frontend components: controllers, services, charts, grids, and file upload/read features.</li>
+            <li>Wrote SQL Server stored procedures, jobs, views, and triggers, plus automated audit reports for compliance.</li>
+            <li>Maintained Splunk Cloud dashboards for real-time monitoring and log analysis.</li>
+          </ul>
+          <div class="tl-stack tag-row">
+            <span class="tag">.NET Framework 4.5</span><span class="tag">Angular 2</span><span class="tag">SQL Server</span><span class="tag">Splunk</span>
+          </div>
+        </details>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects" class="reveal">
+    <div class="section-head">
+      <span class="eyebrow-tag">Deep dives</span>
+      <h2>Two builds worth a closer look</h2>
+    </div>
+    <div class="project-grid">
+      <div class="project-card glass-panel">
+        <span class="p-tag">CURRENT · 02/2026 – PRESENT</span>
+        <h3>LMS Learning Platform</h3>
+        <p>A microservices LXP where the data layer needed to answer very different queries from different clients. GraphQL through HotChocolate let each client ask for exactly the fields it needs, instead of over-fetching from fixed REST responses — with an Ocelot gateway keeping the service boundaries clean.</p>
+        <div class="tag-row">
+          <span class="tag">.NET 8</span><span class="tag">PostgreSQL</span><span class="tag">HotChocolate GraphQL</span><span class="tag">Angular 20</span><span class="tag">Jenkins</span>
+        </div>
+      </div>
+      <div class="project-card glass-panel">
+        <span class="p-tag">ENTERPRISE · 01/2026</span>
+        <h3>ITAP Platform</h3>
+        <p>Centralized identity with Keycloak, hosted on-prem on IIS and later moved to an Azure VM. The trickiest part wasn't the SSO setup — it was a routing collision where refreshing an Angular route 404'd because the client-side router and an IIS-hosted microservice shared the same path name.</p>
+        <div class="tag-row">
+          <span class="tag">Keycloak</span><span class="tag">IIS</span><span class="tag">Azure VM</span><span class="tag">Angular Routing</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="reveal">
+    <div class="contact-box glass-panel">
+      <h2>Have a project in mind?</h2>
+      <div class="contact-links">
+        <a href="mailto:jsmugil@gmail.com">jsmugil@gmail.com</a>
+        <a href="https://www.linkedin.com/in/mugileeshwaran-j-s-5b0335b1" target="_blank" rel="noopener">linkedin.com/in/mugileeshwaran-j-s-5b0335b1</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span>© 2026 Your Name</span>
+  <span>Built with .NET, Angular, and Azure — the same stack shown above.</span>
+</footer>
+
+<script>
+  // Mobile nav toggle
+  const toggle = document.getElementById('navToggle');
+  const links = document.getElementById('navLinks');
+  toggle.addEventListener('click', () => {
+    const open = links.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    links.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+  }));
+
+  // Scroll Reveal Animation (Intersection Observer)
+  const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
+  const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Terminal typing animation
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const termBody = document.getElementById('termBody');
+  const script = [
+    { type: 'cmd', text: 'whoami' },
+    { type: 'out', text: 'full-stack .net engineer · 5 yrs · azure-native · ai-assisted workflows' },
+    { type: 'cmd', text: 'cat career.log' },
+    { type: 'out', text: 'comcast → bgca → fineline → nsf → lms-platform → itap' },
+    { type: 'cmd', text: 'az account show --query "cloudName"' },
+    { type: 'out', text: '"AzureCloud"' },
+    { type: 'cmd', text: 'curl -X POST https://api.ai-engine.local/init' },
+    { type: 'out', text: '200 OK — AI context loaded. Ready for input.' },
+  ];
+
+  function renderStatic(){
+    termBody.innerHTML = script.map(l =>
+      l.type === 'cmd'
+        ? `<div class="terminal-line"><span class="prompt">$</span> ${l.text}</div>`
+        : `<span class="out">${l.text}</span>`
+    ).join('');
+  }
+
+  async function typeLine(el, text, speed){
+    for(let i=0;i<=text.length;i++){
+      el.textContent = text.slice(0,i);
+      await new Promise(r => setTimeout(r, speed));
+    }
+  }
+
+  async function playTerminal(){
+    // Slight delay before starting
+    await new Promise(r => setTimeout(r, 600));
+    for(const line of script){
+      if(line.type === 'cmd'){
+        const row = document.createElement('div');
+        row.className = 'terminal-line';
+        const prompt = document.createElement('span');
+        prompt.className = 'prompt';
+        prompt.textContent = '$ ';
+        const textSpan = document.createElement('span');
+        row.appendChild(prompt);
+        row.appendChild(textSpan);
+        termBody.appendChild(row);
+        await typeLine(textSpan, line.text, 30);
+        await new Promise(r => setTimeout(r, 200));
+      } else {
+        const out = document.createElement('span');
+        out.className = 'out';
+        out.textContent = line.text;
+        termBody.appendChild(out);
+        await new Promise(r => setTimeout(r, 350));
+      }
+    }
+    const cursor = document.createElement('span');
+    cursor.className = 'cursor';
+    termBody.appendChild(cursor);
+  }
+
+  if(reduceMotion){
+    renderStatic();
+  } else {
+    playTerminal();
+  }
+</script>
+
+</body>
+</html>
